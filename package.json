@@ -4,11 +4,11 @@
   "description": "Python DSA workbook — 30 chapters of theory, worked examples, practice and answers.",
   "private": true,
   "scripts": {
-    "build:md":   "./build-book.sh",
+    "build:md": "./build-book.sh",
     "build:html": "./build-html.sh",
     "build:docx": "./build-docx.sh",
-    "build":      "./build-all.sh",
-    "serve":      "cd dist && python3 -m http.server 8765"
+    "build": "./build-all.sh",
+    "serve": "cd dist && python3 -m http.server 8765"
   },
   "type": "commonjs",
   "dependencies": {
@@ -17,6 +17,8 @@
     "markdown-it-anchor": "^9.2.0",
     "markdown-it-attrs": "^4.3.1",
     "markdown-it-container": "^4.0.0",
-    "markdown-it-toc-done-right": "^4.2.0"
+    "markdown-it-toc-done-right": "^4.2.0",
+    "pdf-lib": "^1.17.1",
+    "puppeteer-core": "^25.0.2"
   }
 }

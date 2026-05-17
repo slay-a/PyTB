@@ -732,20 +732,226 @@ em     { color: var(--c-ink-soft); }
 .chapter-card[data-color="yellow"] .ch-num { color: #B45309; }
 
 /* ============================================================
-   PRINT — for browser "Save as PDF"
+   BOOK (single-page assembly): cover, TOC, appendix
+   ============================================================ */
+
+/* ----- Cover ----- */
+.book-cover {
+  min-height: 92vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 40px 30px;
+  background:
+    radial-gradient(ellipse at 20% 10%, rgba(236, 72, 153, 0.10), transparent 60%),
+    radial-gradient(ellipse at 80% 90%, rgba(245, 158, 11, 0.10), transparent 55%),
+    radial-gradient(ellipse at 50% 50%, rgba(124, 58, 237, 0.06), transparent 70%);
+  border-radius: 16px;
+  position: relative;
+  overflow: hidden;
+}
+.book-cover::before, .book-cover::after {
+  content: "";
+  position: absolute;
+  border-radius: 50%;
+  pointer-events: none;
+}
+.book-cover::before {
+  width: 240px; height: 240px;
+  top: -100px; right: -80px;
+  background: radial-gradient(circle at 30% 30%, rgba(124,58,237,0.18), transparent 70%);
+}
+.book-cover::after {
+  width: 200px; height: 200px;
+  bottom: -90px; left: -60px;
+  background: radial-gradient(circle at 60% 40%, rgba(236,72,153,0.20), transparent 70%);
+}
+.book-cover .cover-inner { position: relative; z-index: 1; max-width: 580px; }
+.book-cover .cover-kicker {
+  font-family: var(--font-ui);
+  text-transform: uppercase;
+  letter-spacing: 6px;
+  font-size: 12px;
+  color: var(--c-purple-deep);
+  font-weight: 700;
+}
+.book-cover .cover-title {
+  font-family: var(--font-display);
+  font-size: 96px;
+  letter-spacing: -3px;
+  margin: 18px 0 12px;
+  background: linear-gradient(135deg, var(--c-purple), var(--c-pink), var(--c-orange));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  border: none;
+  padding: 0;
+}
+.book-cover .cover-title::after { display: none; }
+.book-cover .cover-sub {
+  font-style: italic;
+  font-size: 19px;
+  color: var(--c-ink);
+  margin: 12px auto 0;
+  max-width: 480px;
+}
+.book-cover .cover-rule {
+  width: 120px;
+  height: 4px;
+  margin: 32px auto 14px;
+  background: linear-gradient(90deg, var(--c-purple), var(--c-pink), var(--c-orange), var(--c-yellow), var(--c-green));
+  border-radius: 2px;
+}
+.book-cover .cover-meta {
+  font-family: var(--font-ui);
+  font-size: 13px;
+  color: var(--c-ink-soft);
+}
+
+/* ----- Table of contents ----- */
+.book-toc {
+  padding: 28px 16px 20px;
+}
+.book-toc .toc-heading {
+  font-family: var(--font-display);
+  font-size: 42px;
+  text-align: center;
+  color: var(--c-purple-deep);
+  border: none;
+  padding: 0;
+  margin: 8px 0 6px;
+}
+.book-toc .toc-heading::after { display: none; }
+.book-toc .toc-subheading {
+  font-family: var(--font-display);
+  font-size: 22px;
+  text-align: center;
+  margin: 28px 0 10px;
+  color: var(--c-purple-deep);
+  padding: 0;
+}
+.book-toc .toc-subheading::before,
+.book-toc .toc-subheading::after { display: none; }
+
+.book-toc .toc-list {
+  list-style: none;
+  counter-reset: none;
+  padding: 0;
+  margin: 18px auto;
+  max-width: 600px;
+}
+.book-toc .toc-row {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  padding: 10px 6px;
+  border-bottom: 1px dashed var(--c-rule);
+  font-family: var(--font-body);
+  font-size: 16px;
+}
+.book-toc .toc-row::before { display: none; }
+.book-toc .toc-num {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 18px;
+  color: var(--c-purple);
+  min-width: 36px;
+  text-align: center;
+  background: var(--c-purple-soft);
+  border-radius: 6px;
+  padding: 2px 8px;
+  flex: 0 0 auto;
+}
+.book-toc .toc-appendix .toc-num {
+  background: var(--c-yellow-soft);
+  color: #B45309;
+}
+.book-toc .toc-title {
+  flex: 0 1 auto;
+  color: var(--c-ink);
+  font-weight: 500;
+}
+.book-toc .toc-dots {
+  flex: 1 1 auto;
+  border-bottom: 2px dotted #C9BE9C;
+  height: 1px;
+  margin: 0 6px;
+  position: relative;
+  top: -4px;
+}
+.book-toc .toc-page {
+  flex: 0 0 auto;
+  color: var(--c-ink-soft);
+  font-family: var(--font-ui);
+  font-size: 13px;
+  min-width: 32px;
+  text-align: right;
+}
+
+/* ----- Back matter ----- */
+.appendix-section {
+  background: linear-gradient(180deg, var(--c-yellow-soft) 0%, transparent 200px);
+  padding-top: 4px;
+}
+.appendix-section h1:first-of-type {
+  border-bottom-color: var(--c-yellow);
+}
+.appendix-section h1:first-of-type::after {
+  background: var(--c-orange);
+}
+
+/* ----- End-of-book colophon ----- */
+.book-end {
+  margin-top: 60px;
+  padding: 60px 20px;
+  text-align: center;
+}
+.book-end .end-rule {
+  width: 60px;
+  height: 3px;
+  margin: 0 auto 16px;
+  background: linear-gradient(90deg, var(--c-purple), var(--c-pink));
+  border-radius: 2px;
+}
+.book-end .end-line {
+  font-family: var(--font-display);
+  font-size: 22px;
+  color: var(--c-purple-deep);
+  font-weight: 700;
+}
+.book-end .end-sub {
+  font-family: var(--font-ui);
+  font-size: 13px;
+  color: var(--c-ink-soft);
+  margin-top: 6px;
+}
+
+/* ============================================================
+   PRINT — for browser "Save as PDF" and Puppeteer PDF
    ============================================================ */
 
 @media print {
+  /* Default page (chapters, glossary) */
   @page {
     size: A4;
-    margin: 18mm 16mm 18mm 16mm;
+    margin: 22mm 18mm 22mm 18mm;
+  }
+
+  /* The cover page — no header/footer, edge-to-edge background */
+  @page :first {
+    margin: 0;
+  }
+
+  html, body {
+    background: #fff !important;
+    background-image: none !important;
   }
   body {
-    background: #fff;
-    font-size: 11.5pt;
-    line-height: 1.45;
+    font-size: 11pt;
+    line-height: 1.5;
   }
-  .page {
+  .page, .book-page {
     max-width: 100%;
     margin: 0;
     padding: 0;
@@ -753,24 +959,69 @@ em     { color: var(--c-ink-soft); }
     border-radius: 0;
     background: #fff;
   }
-  .topnav, .print-hidden { display: none !important; }
 
-  .chapter-banner {
-    page-break-after: avoid;
-    -webkit-print-color-adjust: exact;
-    print-color-adjust: exact;
-  }
+  .topnav, .print-hidden, .header-anchor, .anchor-link { display: none !important; }
+
+  /* Force-print all coloured backgrounds */
   .chapter-banner, .index-hero, thead,
-  .callout, .chapter-card, pre, table,
-  hr {
-    -webkit-print-color-adjust: exact;
-    print-color-adjust: exact;
+  .callout, .chapter-card, pre, table, hr,
+  .book-cover, .toc-num, .appendix-section,
+  .book-cover .cover-title, .book-end .end-rule,
+  .book-cover .cover-rule, .chapter-section,
+  blockquote {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
   }
-  h1, h2, h3 { page-break-after: avoid; }
-  pre, table, blockquote, .callout, .chapter-card { page-break-inside: avoid; }
-  img { page-break-inside: avoid; }
 
-  /* Each chapter starts on its own page when assembled */
-  .chapter-section { page-break-before: always; }
-  .chapter-section:first-of-type { page-break-before: auto; }
+  /* Page-break behaviour — like a real textbook */
+  .book-cover     { page-break-after: always; break-after: page; min-height: 0; padding: 0; border-radius: 0; }
+  .book-toc       { page-break-after: always; break-after: page; padding-top: 0; }
+  .chapter-section { page-break-before: always; break-before: page; }
+  .appendix-section { page-break-before: always; break-before: page; }
+  .book-end       { page-break-before: always; break-before: page; }
+
+  /* Inside-chapter pagination */
+  h1, h2, h3, h4 { page-break-after: avoid; break-after: avoid; }
+  pre, table, blockquote, .callout, .chapter-card, .chapter-banner {
+    page-break-inside: avoid; break-inside: avoid;
+  }
+  img { page-break-inside: avoid; break-inside: avoid; }
+
+  /* Chapter banner: span full text column and survive print */
+  .chapter-banner {
+    border-radius: 12px;
+    margin-bottom: 16pt;
+    padding: 24px 22px 20px;
+  }
+  .chapter-banner h1 { font-size: 28pt; }
+  .chapter-banner .ch-tagline { font-size: 12pt; }
+
+  /* Cover sizing for A4 */
+  .book-cover {
+    height: 100vh;
+    width: 100%;
+    background:
+      linear-gradient(135deg, var(--c-purple) 0%, var(--c-pink) 55%, var(--c-orange) 100%) !important;
+    color: #fff;
+    border-radius: 0;
+  }
+  .book-cover::before, .book-cover::after {
+    background: rgba(255,255,255,0.10) !important;
+  }
+  .book-cover .cover-kicker { color: rgba(255,255,255,0.85); }
+  .book-cover .cover-title {
+    color: #fff !important;
+    background: none !important;
+    -webkit-text-fill-color: #fff;
+    text-shadow: 0 4px 30px rgba(0,0,0,0.18);
+  }
+  .book-cover .cover-sub  { color: rgba(255,255,255,0.94); }
+  .book-cover .cover-meta { color: rgba(255,255,255,0.85); }
+
+  /* TOC: tighter on paper */
+  .book-toc .toc-heading { font-size: 32pt; margin-top: 14pt; }
+  .book-toc .toc-row { font-size: 11pt; padding: 7px 4px; }
+
+  /* Slight bleed for chapter banners so they read as headers, not callouts */
+  .chapter-section .chapter-banner { margin-top: 0; }
 }

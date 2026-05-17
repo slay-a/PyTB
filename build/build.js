@@ -498,36 +498,80 @@ ${pageFoot()}`;
     fs.writeFileSync(path.join(DIST, "about.html"), page);
   }
 
-  // ----- Single-page book (everything in one scroll, page-break-friendly) -----
+  // ----- Single-page book (cover -> TOC -> chapters -> glossary at back) -----
   let bookBody = "";
 
-  // Cover
+  // -------- 1) Cover (no page number) --------
   bookBody += `
-<section class="chapter-section" style="text-align:center;padding:80px 20px 60px;">
-  <div style="font-family:var(--font-ui);text-transform:uppercase;letter-spacing:6px;font-size:12px;color:var(--c-purple-deep);font-weight:600">A Python DSA Workbook</div>
-  <h1 style="font-family:var(--font-display);font-size:84px;letter-spacing:-2px;margin:18px 0 12px;background:linear-gradient(135deg, var(--c-purple), var(--c-pink), var(--c-orange));-webkit-background-clip:text;background-clip:text;color:transparent;border:none;padding:0">PyTB</h1>
-  <div style="font-style:italic;font-size:21px;color:var(--c-ink-soft);max-width:520px;margin:0 auto 26px">Thirty chapters from "I know what <code>Counter</code> is" to "I can solve a LeetCode problem in 20 minutes."</div>
-  <hr>
-  <div style="font-family:var(--font-ui);font-size:13px;color:var(--c-ink-soft)">Assembled ${new Date().toISOString().slice(0,10)}</div>
+<section class="book-cover" data-running-title="">
+  <div class="cover-inner">
+    <div class="cover-kicker">A Python DSA Workbook</div>
+    <h1 class="cover-title">PyTB</h1>
+    <div class="cover-sub">Thirty chapters from “I know what <code>Counter</code> is” to “I can solve a LeetCode problem in 20 minutes.”</div>
+    <div class="cover-rule"></div>
+    <div class="cover-meta">Assembled ${new Date().toISOString().slice(0,10)} &nbsp;·&nbsp; ${builtChapters.length} chapter${builtChapters.length === 1 ? "" : "s"} ready</div>
+  </div>
 </section>`;
 
-  // Glossary
+  // -------- 2) Table of contents --------
+  const tocChapterRows = builtChapters.map(ch => `
+    <li class="toc-row">
+      <span class="toc-num">${String(ch.n).padStart(2, "0")}</span>
+      <span class="toc-title">${escapeHtml(ch.title)}</span>
+      <span class="toc-dots"></span>
+      <span class="toc-page" data-page-target="chapter-${ch.n}">·</span>
+    </li>`).join("");
+
+  const tocAppendix = fs.existsSync(glossaryPath) ? `
+    <li class="toc-row toc-appendix">
+      <span class="toc-num">A</span>
+      <span class="toc-title">Glossary — every term in plain English</span>
+      <span class="toc-dots"></span>
+      <span class="toc-page" data-page-target="glossary">·</span>
+    </li>` : "";
+
+  bookBody += `
+<section class="book-toc" data-running-title="Table of Contents">
+  <h1 class="toc-heading">Contents</h1>
+  <ol class="toc-list">
+    ${tocChapterRows}
+  </ol>
+  ${tocAppendix ? `<h2 class="toc-subheading">Appendix</h2><ol class="toc-list">${tocAppendix}</ol>` : ""}
+</section>`;
+
+  // -------- 3) Chapters in order --------
+  for (const ch of builtChapters) {
+    bookBody += `
+<section class="chapter-section" id="chapter-${ch.n}" data-running-title="Ch ${ch.n} · ${escapeHtml(ch.title)}">
+  ${ch.bannerHtml}
+  ${ch.contentHtml}
+</section>`;
+  }
+
+  // -------- 4) Glossary at the back --------
   if (fs.existsSync(glossaryPath)) {
     const glossText = fs.readFileSync(glossaryPath, "utf8");
     const html = renderPlainMd(glossText);
-    bookBody += `\n<section class="chapter-section">${html}</section>\n`;
+    bookBody += `
+<section class="chapter-section appendix-section" id="glossary" data-running-title="Glossary">
+  ${html}
+</section>`;
   }
 
-  // Chapters
-  for (const ch of builtChapters) {
-    bookBody += `\n<section class="chapter-section">${ch.bannerHtml}${ch.contentHtml}</section>\n`;
-  }
+  // -------- 5) End-of-book colophon --------
+  bookBody += `
+<section class="book-end" data-running-title="">
+  <div class="end-inner">
+    <div class="end-rule"></div>
+    <div class="end-line">End of build</div>
+    <div class="end-sub">${builtChapters.length} chapter${builtChapters.length === 1 ? "" : "s"} ready · assembled ${new Date().toISOString().slice(0,10)}</div>
+  </div>
+</section>`;
 
   const bookHtml = `${pageHead("PyTB — full book")}
-<div class="page">
+<div class="page book-page">
   ${topnav({ prev: null, next: null })}
   ${bookBody}
-  <p style="text-align:center;margin-top:48px;color:var(--c-ink-soft);font-family:var(--font-ui);font-size:13px">End of current build · ${builtChapters.length} chapter${builtChapters.length === 1 ? "" : "s"} ready</p>
 </div>
 ${pageFoot()}`;
   fs.writeFileSync(path.join(DIST, "book.html"), bookHtml);
