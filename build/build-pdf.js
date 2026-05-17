@@ -32,6 +32,10 @@ const CHROME_PATHS = [
   "/Applications/Microsoft Edge.app/Contents/MacOS/Microsoft Edge",
   "/Applications/Brave Browser.app/Contents/MacOS/Brave Browser",
   "/Applications/Arc.app/Contents/MacOS/Arc",
+  "/usr/bin/google-chrome",
+  "/usr/bin/google-chrome-stable",
+  "/usr/bin/chromium",
+  "/usr/bin/chromium-browser",
 ];
 
 function findChrome() {
