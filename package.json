@@ -1,0 +1,22 @@
+{
+  "name": "pytb",
+  "version": "1.0.0",
+  "description": "Python DSA workbook — 30 chapters of theory, worked examples, practice and answers.",
+  "private": true,
+  "scripts": {
+    "build:md":   "./build-book.sh",
+    "build:html": "./build-html.sh",
+    "build:docx": "./build-docx.sh",
+    "build":      "./build-all.sh",
+    "serve":      "cd dist && python3 -m http.server 8765"
+  },
+  "type": "commonjs",
+  "dependencies": {
+    "highlight.js": "^11.11.1",
+    "markdown-it": "^14.1.1",
+    "markdown-it-anchor": "^9.2.0",
+    "markdown-it-attrs": "^4.3.1",
+    "markdown-it-container": "^4.0.0",
+    "markdown-it-toc-done-right": "^4.2.0"
+  }
+}
