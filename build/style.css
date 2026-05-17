@@ -928,6 +928,95 @@ em     { color: var(--c-ink-soft); }
 }
 
 /* ============================================================
+   READER UI — progress bar, chapter pill, page chip
+   (injected by build/reader.js on long pages)
+   ============================================================ */
+
+.reader-progress {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  height: 4px;
+  background: rgba(124, 58, 237, 0.10);
+  z-index: 1000;
+  pointer-events: none;
+}
+.reader-progress-fill {
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg, var(--c-purple), var(--c-pink), var(--c-orange), var(--c-yellow));
+  border-radius: 0 2px 2px 0;
+  transition: width 0.1s linear;
+}
+
+.reader-chapter-pill {
+  position: fixed;
+  top: 14px;
+  left: 18px;
+  padding: 6px 14px;
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  color: var(--c-purple-deep);
+  border: 1px solid rgba(124, 58, 237, 0.18);
+  border-radius: 999px;
+  font-family: var(--font-ui);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+  box-shadow: 0 2px 12px -2px rgba(124, 58, 237, 0.18);
+  z-index: 999;
+  pointer-events: none;
+  max-width: 60vw;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  opacity: 1;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+.reader-chapter-pill[data-empty] {
+  opacity: 0;
+  transform: translateY(-4px);
+}
+
+.reader-page-chip {
+  position: fixed;
+  bottom: 16px;
+  right: 18px;
+  padding: 7px 14px;
+  background: rgba(255, 255, 255, 0.94);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  color: var(--c-ink-soft);
+  border: 1px solid var(--c-rule);
+  border-radius: 999px;
+  font-family: var(--font-ui);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+  box-shadow: 0 2px 12px -2px rgba(31, 41, 55, 0.12);
+  z-index: 999;
+  pointer-events: none;
+}
+.reader-page-chip::before {
+  content: "";
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--c-pink);
+  margin-right: 8px;
+  vertical-align: 1px;
+  box-shadow: 0 0 0 2px var(--c-pink-soft);
+}
+
+/* Don't print these UI helpers */
+@media print {
+  .reader-progress,
+  .reader-chapter-pill,
+  .reader-page-chip { display: none !important; }
+}
+
+/* ============================================================
    PRINT — for browser "Save as PDF" and Puppeteer PDF
    ============================================================ */
 

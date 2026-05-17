@@ -304,8 +304,12 @@ function plainPageHeader(title) {
   return `<h1>${escapeHtml(title)}</h1>`;
 }
 
-function pageFoot() {
+function pageFoot({ withReader = false } = {}) {
+  const readerScript = withReader
+    ? `<script src="assets/reader.js" defer></script>`
+    : "";
   return `</div>
+${readerScript}
 </body>
 </html>`;
 }
@@ -429,8 +433,9 @@ function main() {
   fs.rmSync(DIST, { recursive: true, force: true });
   fs.mkdirSync(ASSETS, { recursive: true });
 
-  // Copy CSS
-  fs.copyFileSync(path.join(__dirname, "style.css"), path.join(ASSETS, "style.css"));
+  // Copy CSS + reader.js
+  fs.copyFileSync(path.join(__dirname, "style.css"),  path.join(ASSETS, "style.css"));
+  fs.copyFileSync(path.join(__dirname, "reader.js"), path.join(ASSETS, "reader.js"));
 
   // ----- Build chapter pages -----
   const builtChapters = [];
@@ -460,11 +465,13 @@ function main() {
     const html = `${pageHead("Chapter " + ch.n + " — " + ch.title)}
 <div class="page">
   ${topnav({ prev, next })}
-  ${ch.bannerHtml}
-  ${ch.contentHtml}
+  <div data-running-title="Ch ${ch.n} · ${escapeHtml(ch.title)}">
+    ${ch.bannerHtml}
+    ${ch.contentHtml}
+  </div>
   ${topnav({ prev, next })}
 </div>
-${pageFoot()}`;
+${pageFoot({ withReader: true })}`;
 
     fs.writeFileSync(path.join(DIST, `chapter-${padded}.html`), html);
   });
@@ -477,10 +484,12 @@ ${pageFoot()}`;
     const page = `${pageHead("Glossary — PyTB")}
 <div class="page">
   ${topnav({ prev: null, next: builtChapters[0] ? { href: `chapter-${String(builtChapters[0].n).padStart(2,"0")}.html`, label: `Ch ${builtChapters[0].n} — ${builtChapters[0].title}` } : null })}
-  ${html}
+  <div data-running-title="Glossary">
+    ${html}
+  </div>
   ${topnav({ prev: null, next: builtChapters[0] ? { href: `chapter-${String(builtChapters[0].n).padStart(2,"0")}.html`, label: `Ch ${builtChapters[0].n} — ${builtChapters[0].title}` } : null })}
 </div>
-${pageFoot()}`;
+${pageFoot({ withReader: true })}`;
     fs.writeFileSync(path.join(DIST, "glossary.html"), page);
   }
 
@@ -573,7 +582,7 @@ ${pageFoot()}`;
   ${topnav({ prev: null, next: null })}
   ${bookBody}
 </div>
-${pageFoot()}`;
+${pageFoot({ withReader: true })}`;
   fs.writeFileSync(path.join(DIST, "book.html"), bookHtml);
 
   // ----- Index -----
